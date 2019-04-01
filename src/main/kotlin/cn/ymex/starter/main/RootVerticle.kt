@@ -1,6 +1,7 @@
-package cn.ymex.starter
+package cn.ymex.starter.main
 
 
+import cn.ymex.starter.kits.toBean
 import cn.ymex.starter.router.IndexHandler
 import cn.ymex.starter.router.ScoreHandler
 import io.reactiverse.pgclient.PgClient
@@ -13,30 +14,33 @@ import org.slf4j.LoggerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
 
 
-class MainVerticle : AbstractVerticle() {
+class RootVerticle : AbstractVerticle() {
   init {
     SLF4JBridgeHandler.removeHandlersForRootLogger()
     SLF4JBridgeHandler.install()
   }
 
-  private val logger = LoggerFactory.getLogger(MainVerticle::class.java)
+  private val logger = LoggerFactory.getLogger(RootVerticle::class.java)
 
   override fun start(startFuture: Future<Void>) {
 
-    val dbconfig = config()
+    val dbconf = vertx.fileSystem().readFileBlocking("postgredb.json").toBean<DBConf>()
 
     //vert.x 文件系统api
-    vertx.fileSystem().readFile("E:/Workspace/jetbrains/vert.starter/src/main/resources/postgredb.json"){
-      logger.info(it.result().toBean())
-    }
+//    vertx.fileSystem().readFile("postgredb.json") {
+//      val conf = it.result().toBean<DbConfig>()
+//      logger.info(conf.host)
+//    }
+    logger.info(dbconf.host)
+
 
     val options = PgPoolOptions()
-      .setPort(dbconfig.getInteger("port"))
-      .setHost(dbconfig.getString("host"))
-      .setDatabase(dbconfig.getString("database"))
-      .setUser(dbconfig.getString("user"))
-      .setPassword(dbconfig.getString("password"))
-      .setMaxSize(dbconfig.getInteger("pool_size",10))
+      .setPort(dbconf.port)
+      .setHost(dbconf.host)
+      .setDatabase(dbconf.database)
+      .setUser(dbconf.user)
+      .setPassword(dbconf.password)
+      .setMaxSize(dbconf.poolSize)
     val client = PgClient.pool(vertx, options)
     val appRouter = Router.router(vertx)
 

@@ -1,16 +1,11 @@
-package cn.ymex.starter
+package cn.ymex.starter.main
 
 import io.vertx.core.Launcher
 import io.vertx.core.VertxOptions
 
-fun main(args: Array<String>) {
-
-  App().dispatch(args)
-}
 
 
-open class App : Launcher() {
-
+open class AppLauncher : Launcher() {
 
   override fun beforeStartingVertx(options: VertxOptions?) {
     options?.run {

@@ -8,8 +8,8 @@ group = 'cn.ymex'
 version = '1.0.0-SNAPSHOT'
 
 repositories {
-  maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-  maven{ url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+  maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+  maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
   mavenCentral()
   jcenter()
 }
@@ -21,11 +21,11 @@ ext {
 }
 
 application {
-  mainClassName = 'io.vertx.core.Launcher'
+  mainClassName = 'cn.ymex.starter.main.App'
 }
 
 
-def mainVerticleName = 'cn.ymex.starter.MainVerticle'
+def mainVerticleName = 'cn.ymex.starter.main.RootVerticle'
 def watchForChange = 'src/**/*'
 def doOnChange = 'gradlew classes'
 
@@ -57,9 +57,9 @@ compileTestKotlin {
 
 shadowJar {
   classifier = 'fat'
-  manifest {
-    attributes 'Main-Verticle': mainVerticleName
-  }
+//  manifest {
+//    attributes 'Main-Verticle': mainVerticleName
+//  }
   mergeServiceFiles {
     include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
   }

@@ -1,2 +1,0 @@
-package cn.ymex.starter
-

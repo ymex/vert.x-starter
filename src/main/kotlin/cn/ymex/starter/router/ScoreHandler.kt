@@ -1,6 +1,6 @@
 package cn.ymex.starter.router
 
-import cn.ymex.starter.jsonContentType
+import cn.ymex.starter.kits.jsonContentType
 import io.reactiverse.pgclient.PgPool
 import io.reactiverse.pgclient.Tuple
 import io.vertx.core.Handler

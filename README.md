@@ -19,7 +19,7 @@ To package your application:
 To run your application:
 ```
 main class: cn.ymex.starter.AppKt
-run arg: run run cn.ymex.starter.MainVerticle -conf "E:\Workspace\jetbrains\vert.starter\src\main\resources\postgredb.js"
+run arg: run cn.ymex.starter.MainVerticle -conf "E:\Workspace\jetbrains\vert.starter\src\main\resources\postgredb.json"
 ```
 
 ## Help

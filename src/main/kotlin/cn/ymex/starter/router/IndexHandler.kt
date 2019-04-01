@@ -1,6 +1,6 @@
 package cn.ymex.starter.router
 
-import cn.ymex.starter.textContentType
+import cn.ymex.starter.kits.textContentType
 import io.vertx.core.Handler
 import io.vertx.ext.web.RoutingContext
 

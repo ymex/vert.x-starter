@@ -1,5 +1,6 @@
 package cn.ymex.starter
 
+import cn.ymex.starter.main.RootVerticle
 import io.vertx.core.Vertx
 import io.vertx.junit5.Timeout
 import io.vertx.junit5.VertxExtension
@@ -12,11 +13,11 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.concurrent.TimeUnit
 
 @ExtendWith(VertxExtension::class)
-class TestMainVerticle {
+class TestRootVerticle {
 
   @BeforeEach
   fun deploy_verticle(vertx: Vertx, testContext: VertxTestContext) {
-    vertx.deployVerticle(MainVerticle(), testContext.succeeding<String> { _ -> testContext.completeNow() })
+    vertx.deployVerticle(RootVerticle(), testContext.succeeding<String> { _ -> testContext.completeNow() })
   }
 
   @Test
