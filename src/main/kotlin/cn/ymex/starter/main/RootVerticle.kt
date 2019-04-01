@@ -4,9 +4,8 @@ package cn.ymex.starter.main
 import cn.ymex.starter.kits.toBean
 import cn.ymex.starter.router.IndexHandler
 import cn.ymex.starter.router.ScoreHandler
-import io.reactiverse.pgclient.PgClient
-import io.reactiverse.pgclient.PgPoolOptions
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.DeploymentOptions
 import io.vertx.core.Future
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
@@ -24,20 +23,12 @@ class RootVerticle : AbstractVerticle() {
 
   override fun start(startFuture: Future<Void>) {
 
-    val dbconf = vertx.fileSystem().readFileBlocking("postgredb.json").toBean<DBConf>()
-    
-    val options = PgPoolOptions()
-      .setPort(dbconf.port)
-      .setHost(dbconf.host)
-      .setDatabase(dbconf.database)
-      .setUser(dbconf.user)
-      .setPassword(dbconf.password)
-      .setMaxSize(dbconf.poolSize)
-    val client = PgClient.pool(vertx, options)
-    val appRouter = Router.router(vertx)
 
+    val appRouter = Router.router(vertx)
     appRouter.route("/").handler(IndexHandler())
-    appRouter.post("/score").handler(BodyHandler.create()).handler(ScoreHandler(client))
+    appRouter.post("/score").handler(BodyHandler.create()).handler(ScoreHandler(vertx))
+
+    vertx.deployVerticle(DataBaseVerticle::class.java.name, DeploymentOptions().setInstances(4))
 
     vertx.createHttpServer().requestHandler(appRouter)
       .listen(8888) { http ->

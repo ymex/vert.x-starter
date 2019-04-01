@@ -4,33 +4,31 @@ import cn.ymex.starter.kits.jsonContentType
 import io.reactiverse.pgclient.PgPool
 import io.reactiverse.pgclient.Tuple
 import io.vertx.core.Handler
+import io.vertx.core.Vertx
+import io.vertx.core.eventbus.EventBus
+import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
 import org.slf4j.LoggerFactory
 
-class ScoreHandler(val db: PgPool) : Handler<RoutingContext> {
+class ScoreHandler(val vertx: Vertx) : Handler<RoutingContext> {
 
   private val logger = LoggerFactory.getLogger(ScoreHandler::class.java)
 
-  override fun handle(it: RoutingContext) {
-    if (it.bodyAsJson == null) {
-      it.response().jsonContentType().end("{}")
+  override fun handle(context: RoutingContext) {
+    if (context.bodyAsJson == null) {
+      context.response().jsonContentType().end("{}")
       return
     }
+    val body = context.bodyAsJson
 
-    var body = it.bodyAsJson
-
-    db.preparedQuery(
-      "insert into member(name, age) values ($1,$2) returning id;",
-      Tuple.of(body.getString("name"), body.getString("age").toInt())
-    ) { ar ->
-      if (ar.succeeded()) {
-        val id = ar.result().iterator().next().getInteger("id")
-        body.put("uid", id)
-        it.response().jsonContentType().end(body.toString())
-      } else {
-        logger.info(ar.cause().toString())
+    vertx.eventBus().send<String>("add_score",body){
+      if (it.succeeded()) {
+        body.put("uid", it.result().body())
+        context.response().jsonContentType().end(body.toString())
+      }else{
+        context.fail(500, it.cause())
       }
     }
-
   }
 }
+
