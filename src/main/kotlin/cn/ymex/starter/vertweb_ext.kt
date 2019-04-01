@@ -1,6 +1,9 @@
 package cn.ymex.starter
 
+import com.google.gson.Gson
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpServerResponse
+import java.lang.reflect.Type
 
 
 fun HttpServerResponse.contentType(type: String): HttpServerResponse {
@@ -21,4 +24,8 @@ fun HttpServerResponse.htmlContentType(): HttpServerResponse {
 fun HttpServerResponse.jsonContentType(): HttpServerResponse {
   this.putHeader("content-type", "application/json")
   return this
+}
+
+fun <T> Buffer.toBean(type: Type): T {
+  return Gson().fromJson<T>(toString(), type)
 }

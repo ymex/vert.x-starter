@@ -9,6 +9,7 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
+import org.slf4j.LoggerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
 
 
@@ -18,15 +19,24 @@ class MainVerticle : AbstractVerticle() {
     SLF4JBridgeHandler.install()
   }
 
+  private val logger = LoggerFactory.getLogger(MainVerticle::class.java)
+
   override fun start(startFuture: Future<Void>) {
-    config()
+
+    val dbconfig = config()
+
+    //vert.x 文件系统api
+    vertx.fileSystem().readFile("E:/Workspace/jetbrains/vert.starter/src/main/resources/postgredb.json"){
+      logger.info(it.result().toBean())
+    }
+
     val options = PgPoolOptions()
-      .setPort(5432)
-      .setHost("127.0.0.1")
-      .setDatabase("ForL")
-      .setUser("postgres")
-      .setPassword("ymex")
-      .setMaxSize(5)
+      .setPort(dbconfig.getInteger("port"))
+      .setHost(dbconfig.getString("host"))
+      .setDatabase(dbconfig.getString("database"))
+      .setUser(dbconfig.getString("user"))
+      .setPassword(dbconfig.getString("password"))
+      .setMaxSize(dbconfig.getInteger("pool_size",10))
     val client = PgClient.pool(vertx, options)
     val appRouter = Router.router(vertx)
 

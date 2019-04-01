@@ -4,6 +4,7 @@ import io.vertx.core.Launcher
 import io.vertx.core.VertxOptions
 
 fun main(args: Array<String>) {
+
   App().dispatch(args)
 }
 
