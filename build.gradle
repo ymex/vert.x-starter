@@ -24,11 +24,6 @@ application {
   mainClassName = 'cn.ymex.starter.main.App'
 }
 
-
-def mainVerticleName = 'cn.ymex.starter.main.RootVerticle'
-def watchForChange = 'src/**/*'
-def doOnChange = 'gradlew classes'
-
 dependencies {
   implementation "io.vertx:vertx-core:$vertxVersion"
   implementation "io.vertx:vertx-web:$vertxVersion"
@@ -56,7 +51,7 @@ compileTestKotlin {
 
 
 shadowJar {
-  classifier = 'fat'
+  
 //  manifest {
 //    attributes 'Main-Verticle': mainVerticleName
 //  }
@@ -73,5 +68,5 @@ test {
 }
 
 run {
-  args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange"]
+  args = ['run', 'cn.ymex.starter.main.RootVerticle']
 }

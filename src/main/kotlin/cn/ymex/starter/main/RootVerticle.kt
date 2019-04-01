@@ -25,15 +25,7 @@ class RootVerticle : AbstractVerticle() {
   override fun start(startFuture: Future<Void>) {
 
     val dbconf = vertx.fileSystem().readFileBlocking("postgredb.json").toBean<DBConf>()
-
-    //vert.x 文件系统api
-//    vertx.fileSystem().readFile("postgredb.json") {
-//      val conf = it.result().toBean<DbConfig>()
-//      logger.info(conf.host)
-//    }
-    logger.info(dbconf.host)
-
-
+    
     val options = PgPoolOptions()
       .setPort(dbconf.port)
       .setHost(dbconf.host)
