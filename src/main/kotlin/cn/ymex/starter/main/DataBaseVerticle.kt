@@ -8,6 +8,9 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.json.JsonObject
 
 class DataBaseVerticle : AbstractVerticle() {
+  //数据库链接池
+  lateinit var dbClient: PgClient
+
   override fun start() {
     super.start()
     val dbconf = vertx.fileSystem().readFileBlocking("postgredb.json").toBean<DBConf>()
@@ -19,10 +22,10 @@ class DataBaseVerticle : AbstractVerticle() {
       .setUser(dbconf.user)
       .setPassword(dbconf.password)
       .setMaxSize(dbconf.poolSize)
-    val client = PgClient.pool(vertx, options)
+    dbClient= PgClient.pool(vertx, options)
     vertx.eventBus().consumer<JsonObject>("add_score") {
 
-      client.preparedQuery(
+      dbClient.preparedQuery(
         "insert into member(name, age) values ($1,$2) returning id;",
         Tuple.of(it.body().getString("name"), it.body().getString("age").toInt())
       ) { ar ->
