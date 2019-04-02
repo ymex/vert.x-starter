@@ -1,4 +1,4 @@
-package cn.ymex.starter.kits
+package cn.ymex.starter.core.ext
 
 import com.google.gson.Gson
 import io.vertx.core.buffer.Buffer

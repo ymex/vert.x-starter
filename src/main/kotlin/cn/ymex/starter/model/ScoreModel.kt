@@ -1,18 +1,15 @@
 package cn.ymex.starter.model
 
+import cn.ymex.starter.core.AbstractModel
+import cn.ymex.starter.core.annotation.Model
 import io.reactiverse.pgclient.PgPool
 import io.reactiverse.pgclient.Tuple
-import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
-import io.vertx.core.Vertx
 import io.vertx.core.eventbus.Message
 import io.vertx.core.json.JsonObject
 
-class ScoreModel(val vertx: Vertx):Model<JsonObject,String>{
-  override fun send(body: JsonObject, replyHandler: Handler<AsyncResult<Message<String>>>) {
-    vertx.eventBus().send<String>(javaClass.name, body, replyHandler)
-  }
-
+@Model
+class ScoreModel : AbstractModel<JsonObject, String>() {
   override fun reply(pg: PgPool): Handler<Message<JsonObject>> {
     return Handler {
       pg.preparedQuery(

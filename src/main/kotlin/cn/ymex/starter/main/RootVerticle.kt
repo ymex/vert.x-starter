@@ -15,7 +15,7 @@ class RootVerticle : AbstractVerticle() {
 
   override fun start(startFuture: Future<Void>) {
 
-    vertx.deployVerticle(DataBaseVerticle::class.java.name,
+    vertx.deployVerticle(DataVerticle::class.java.name,
       DeploymentOptions().setInstances(4))
 
     vertx.createHttpServer().requestHandler(RouteRegister(vertx).handler())

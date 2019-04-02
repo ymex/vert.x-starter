@@ -1,15 +1,15 @@
 package cn.ymex.starter.main
 
-import cn.ymex.starter.kits.toBean
-import cn.ymex.starter.model.ScoreModel
+import cn.ymex.starter.core.ext.toBean
+import cn.ymex.starter.model.ModelRegister
 import io.reactiverse.pgclient.PgClient
 import io.reactiverse.pgclient.PgPool
 import io.reactiverse.pgclient.PgPoolOptions
 import io.vertx.core.AbstractVerticle
 
-class DataBaseVerticle : AbstractVerticle() {
+class DataVerticle : AbstractVerticle() {
   //数据库链接池
-  lateinit var pg: PgPool
+  var pg: PgPool? = null
 
   override fun start() {
     super.start()
@@ -23,12 +23,16 @@ class DataBaseVerticle : AbstractVerticle() {
       .setPassword(dbconf.password)
       .setMaxSize(dbconf.poolSize)
     pg = PgClient.pool(vertx, options)
-    vertx.eventBus().consumer(ScoreModel::class.java.name, ScoreModel(vertx).reply(pg))
+    pg?.run {
+      ModelRegister.models.forEach {
+        vertx.eventBus().consumer(it.javaClass.name, it.reply(this))
+      }
+    }
   }
 
 
   override fun stop() {
     super.stop()
-    pg.close()
+    pg?.close()
   }
 }
