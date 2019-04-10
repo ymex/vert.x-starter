@@ -1,7 +1,8 @@
 package cn.ymex.starter.router
 
 import cn.ymex.starter.core.ext.jsonContentType
-import cn.ymex.starter.model.ScoreModel
+import cn.ymex.starter.main.DataSource
+import io.reactiverse.pgclient.Tuple
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.ext.web.RoutingContext
@@ -18,14 +19,18 @@ class ScoreHandler(val vertx: Vertx) : Handler<RoutingContext> {
     }
     val body = context.bodyAsJson
 
-    ScoreModel().send(vertx, body, Handler {
-      if (it.succeeded()) {
-        body.put("uid", it.result().body())
+
+    DataSource.db().preparedQuery(
+      "insert into member(name, age) values ($1,$2) returning id;",
+      Tuple.of(body.getString("name"), body.getString("age").toInt())
+    ) { ar ->
+      if (ar.succeeded()) {
+        val id = ar.result().iterator().next().getInteger("id")
         context.response().jsonContentType().end(body.toString())
       } else {
-        context.fail(500, it.cause())
+        context.fail(500, ar.cause())
       }
-    })
+    }
   }
 }
 

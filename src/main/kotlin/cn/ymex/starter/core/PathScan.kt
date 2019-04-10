@@ -8,13 +8,27 @@ import java.util.*
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
+/**
+ *PathScan.scanClass("cn.ymex.starter.model").forEach {
+ *     println("----------------------:$it")
+ *     val cna = PathScan.loadClass(it)
+ *     cna?.run {
+ *       if (this.isAnnotationPresent(Model::class.java)) {
+ *         val instance = cna.newInstance()
+ *         if (instance is AbstractModel<*, *>) {
+ *           ModelRegister.models.add(instance)
+ *         }
+ *       }
+ *     }
+ *   }
+ */
 object PathScan {
 
 
-  fun loadClass(className:String): Class<*>? {
+  fun loadClass(className: String): Class<*>? {
     try {
       return Class.forName(className)
-    } catch (e: Throwable ) {
+    } catch (e: Throwable) {
     }
     return null
   }

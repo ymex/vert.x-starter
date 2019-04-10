@@ -1,6 +1,5 @@
 package cn.ymex.starter.main
 
-import cn.ymex.starter.core.ext.toBean
 import cn.ymex.starter.router.RouteRegister
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.DeploymentOptions
@@ -19,10 +18,8 @@ class RootVerticle : AbstractVerticle() {
 
     vertx.deployVerticle(
       DataVerticle::class.java.name,
-      DeploymentOptions().setInstances(4)
+      DeploymentOptions().setInstances(1)
     )
-    val dbconf = vertx.fileSystem().readFileBlocking("postgredb.json").toBean<DBConf>()
-    val source = DataSource.getSource(vertx,dbconf)
     vertx.createHttpServer().requestHandler(RouteRegister(vertx).handler())
       .listen(8888) { http ->
         if (http.succeeded()) {
@@ -33,11 +30,6 @@ class RootVerticle : AbstractVerticle() {
         }
       }
 
-  }
-
-  override fun stop() {
-    super.stop()
-    DataSource.close()
   }
 
 }
